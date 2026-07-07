@@ -34,7 +34,7 @@ api.interceptors.response.use(
           return api(originalRequest)
         } catch {
           localStorage.clear()
-          window.location.href = '/auth/login'
+          window.location.href = '/'
         }
       }
     }

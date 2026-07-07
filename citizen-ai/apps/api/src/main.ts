@@ -28,14 +28,18 @@ async function bootstrap() {
   const firebasePrivateKey = configService.get<string>('FIREBASE_PRIVATE_KEY')?.replace(/\\n/g, '\n')
 
   if (firebaseProjectId && firebaseClientEmail && firebasePrivateKey) {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: firebaseProjectId,
-        clientEmail: firebaseClientEmail,
-        privateKey: firebasePrivateKey,
-      }),
-    })
-    console.log('🔥 Firebase Admin initialized')
+    try {
+      admin.initializeApp({
+        credential: admin.credential.cert({
+          projectId: firebaseProjectId,
+          clientEmail: firebaseClientEmail,
+          privateKey: firebasePrivateKey,
+        }),
+      })
+      console.log('🔥 Firebase Admin initialized')
+    } catch (error) {
+      console.warn('⚠️ Firebase Admin initialization failed (Invalid credentials)')
+    }
   } else {
     console.warn('⚠️ Firebase Admin credentials missing')
   }

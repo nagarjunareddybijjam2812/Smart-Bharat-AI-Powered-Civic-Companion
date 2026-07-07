@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { auth } from '../lib/firebase';
-import { onAuthStateChanged, signOut, User as FirebaseUser } from 'firebase/auth';
 
 interface User {
   id: string;
@@ -17,7 +15,7 @@ interface User {
 
 interface AuthState {
   user: User | null;
-  firebaseUser: FirebaseUser | null;
+  firebaseUser: any | null; // Kept for backwards compatibility if needed elsewhere
   accessToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -26,60 +24,38 @@ interface AuthState {
   initAuthListener: () => () => void;
 }
 
+const mockUser: User = {
+  id: 'mock-user-123',
+  email: 'citizen@smartbharat.gov.in',
+  role: 'USER',
+  profile: {
+    firstName: 'Citizen',
+    lastName: 'User',
+    preferredLanguage: 'en',
+  }
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+  user: mockUser,
   firebaseUser: null,
-  accessToken: null,
-  isAuthenticated: false,
-  isLoading: true,
+  accessToken: 'mock-jwt-token',
+  isAuthenticated: true,
+  isLoading: false,
   setUser: (user) => set({ user, isAuthenticated: true }),
   logout: async () => {
-    try {
-      await signOut(auth);
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('accessToken');
-      }
-      set({ user: null, firebaseUser: null, accessToken: null, isAuthenticated: false });
-    } catch (error) {
-      console.error('Logout error', error);
-    }
+    // In mock mode, logout does nothing, or we just leave them authenticated.
+    console.log('Mock logout called - Auth is permanently enabled');
   },
   initAuthListener: () => {
-    if (!auth) {
-      console.warn('Firebase Auth is not initialized. Skipping auth listener.');
-      set({ isLoading: false });
-      return () => {};
-    }
-    
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const token = await firebaseUser.getIdToken();
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('accessToken', token);
-        }
-        
-        // At this point we have Firebase Auth. We should call our backend to get the full profile.
-        // For now, we set minimal state and allow components to fetch full profile.
-        set({
-          firebaseUser,
-          accessToken: token,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      } else {
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('accessToken');
-        }
-        set({
-          user: null,
-          firebaseUser: null,
-          accessToken: null,
-          isAuthenticated: false,
-          isLoading: false,
-        });
-      }
+    // Immediately set the authenticated mock state
+    set({
+      user: mockUser,
+      isAuthenticated: true,
+      isLoading: false,
+      accessToken: 'mock-jwt-token'
     });
-
-    return unsubscribe;
+    
+    // Return a dummy unsubscribe function
+    return () => {};
   },
 }));

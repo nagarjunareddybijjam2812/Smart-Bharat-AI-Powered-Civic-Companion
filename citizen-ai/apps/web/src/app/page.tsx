@@ -68,8 +68,7 @@ export default function LandingPage() {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/auth/login" className="btn-ghost text-sm py-2 px-4">Sign In</Link>
-            <Link href="/auth/signup" className="btn-primary text-sm py-2 px-4">Get Started</Link>
+            <Link href="/ai-chat" className="btn-primary text-sm py-2 px-4">Launch App</Link>
           </div>
 
           {/* Mobile menu */}
@@ -94,8 +93,7 @@ export default function LandingPage() {
               <NavLink href="#services">Services</NavLink>
               <NavLink href="#about">About</NavLink>
               <div className="flex gap-3 pt-2">
-                <Link href="/auth/login" className="btn-ghost text-sm py-2 px-4 flex-1 text-center">Sign In</Link>
-                <Link href="/auth/signup" className="btn-primary text-sm py-2 px-4 flex-1 text-center">Get Started</Link>
+                <Link href="/ai-chat" className="btn-primary text-sm py-2 px-4 flex-1 text-center">Launch App</Link>
               </div>
             </motion.div>
           )}
@@ -153,12 +151,9 @@ export default function LandingPage() {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20"
           >
-            <Link href="/auth/signup" className="btn-primary px-8 py-4 text-base rounded-xl w-full sm:w-auto">
-              Start For Free
+            <Link href="/ai-chat" className="btn-primary px-8 py-4 text-base rounded-xl w-full sm:w-auto">
+              Launch App
               <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link href="/auth/login" className="btn-ghost px-8 py-4 text-base rounded-xl w-full sm:w-auto">
-              Sign In
             </Link>
           </motion.div>
 
@@ -265,8 +260,8 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <Link href="/auth/signup" className="btn-primary inline-flex">
-                Try AI Assistant Free
+              <Link href="/ai-chat" className="btn-primary inline-flex">
+                Try AI Assistant
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
@@ -360,12 +355,9 @@ export default function LandingPage() {
                 Join 50 million+ citizens already using CitizenAI to access government services faster and smarter.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/auth/signup" className="btn-primary px-10 py-4 text-base rounded-xl">
-                  Get Started Free
+                <Link href="/ai-chat" className="btn-primary px-10 py-4 text-base rounded-xl">
+                  Launch App
                   <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link href="/auth/login" className="btn-ghost px-10 py-4 text-base rounded-xl">
-                  Sign In
                 </Link>
               </div>
             </div>
