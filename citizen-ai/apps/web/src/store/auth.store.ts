@@ -45,6 +45,12 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
   initAuthListener: () => {
+    if (!auth) {
+      console.warn('Firebase Auth is not initialized. Skipping auth listener.');
+      set({ isLoading: false });
+      return () => {};
+    }
+    
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const token = await firebaseUser.getIdToken();
