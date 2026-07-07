@@ -78,6 +78,8 @@ export const aiApi = {
   draftComplaint: (description: string, category?: string) =>
     api.post('/ai/draft-complaint', { description, category }),
   simplifyPolicy: (text: string) => api.post('/ai/simplify-policy', { text }),
+  analyzeDocument: (imageBase64: string, mimeType: string) =>
+    api.post('/ai/analyze-document', { imageBase64, mimeType }),
 }
 
 export const notificationsApi = {

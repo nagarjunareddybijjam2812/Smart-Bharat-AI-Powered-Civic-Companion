@@ -4,6 +4,7 @@ import { PRISMA_SERVICE } from '../common/database/database.module'
 import { RagService } from './rag.service'
 import { GeminiService } from './gemini.service'
 import { MemoryService } from './memory.service'
+import { OcrService } from './ocr.service'
 
 @Injectable()
 export class AiService {
@@ -12,6 +13,7 @@ export class AiService {
     private readonly rag: RagService,
     private readonly gemini: GeminiService,
     private readonly memory: MemoryService,
+    private readonly ocr: OcrService,
   ) {}
 
   async chat(userId: string, conversationId: string, message: string) {
@@ -128,5 +130,9 @@ Provide:
 3. Who is eligible
 4. How to apply (if applicable)`
     return this.gemini.generateContent(prompt)
+  }
+
+  async analyzeDocument(imageBase64: string, mimeType: string) {
+    return this.ocr.extractTextFromImage(imageBase64, mimeType)
   }
 }

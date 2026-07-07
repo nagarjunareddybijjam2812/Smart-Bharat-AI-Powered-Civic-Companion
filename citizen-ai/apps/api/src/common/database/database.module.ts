@@ -14,7 +14,11 @@ export const PRISMA_SERVICE = 'PRISMA_SERVICE'
         const client = new PrismaClient({
           log: config.get('NODE_ENV') === 'development' ? ['error', 'warn'] : ['error'],
         })
-        await client.$connect()
+        try {
+          await client.$connect()
+        } catch (error) {
+          console.error('⚠️ Database connection failed. Ensure DATABASE_URL is correct.')
+        }
         return client
       },
       inject: [ConfigService],

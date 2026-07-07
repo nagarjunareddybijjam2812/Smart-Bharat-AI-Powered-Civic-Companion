@@ -20,6 +20,7 @@ interface Message {
   sources?: Array<{ index: number; excerpt: string; similarity: number }>
   timestamp: Date
   loading?: boolean
+  isDocument?: boolean
 }
 
 const SUGGESTED_PROMPTS = [
@@ -53,6 +54,7 @@ function AiChatContent() {
   const [conversationId] = useState(() => generateId())
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const searchParams = useSearchParams()
   const initialQuery = searchParams.get('q')
 
@@ -95,6 +97,41 @@ function AiChatContent() {
       setLoading(false)
       inputRef.current?.focus()
     }
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = async (event) => {
+      const base64String = (event.target?.result as string).split(',')[1]
+      
+      const userMsg: Message = { id: generateId(), role: 'user', content: `Uploaded document: ${file.name}`, timestamp: new Date(), isDocument: true }
+      const loadingMsg: Message = { id: generateId(), role: 'assistant', content: '', timestamp: new Date(), loading: true }
+      
+      setMessages(prev => [...prev, userMsg, loadingMsg])
+      setLoading(true)
+
+      try {
+        const res = await aiApi.analyzeDocument(base64String, file.type) as any
+        const data = res.data || res
+        
+        const responseText = `I analyzed the document you uploaded.\n\n**Document Type:** ${data.documentType}\n**Confidence:** ${Math.round(data.confidence * 100)}%\n\n**Extracted Fields:**\n${Object.entries(data.fields || {}).map(([k, v]) => `- **${k}:** ${v}`).join('\n')}`
+        
+        setMessages(prev => prev.map(m =>
+          m.loading ? { ...m, loading: false, content: responseText } : m
+        ))
+      } catch (err) {
+        setMessages(prev => prev.map(m =>
+          m.loading ? { ...m, loading: false, content: 'Sorry, I could not process that document.' } : m
+        ))
+      } finally {
+        setLoading(false)
+        if (fileInputRef.current) fileInputRef.current.value = ''
+      }
+    }
+    reader.readAsDataURL(file)
   }
 
   const copyMessage = (content: string) => navigator.clipboard?.writeText(content)
@@ -220,7 +257,18 @@ function AiChatContent() {
       {/* Input */}
       <div className="glass-nav fixed bottom-0 left-0 right-0 px-4 py-3 safe-area-pb">
         <div className="flex items-end gap-2 max-w-3xl mx-auto">
-          <button className="glass p-2.5 rounded-xl text-on-surface-variant hover:text-on-surface transition-colors flex-shrink-0 mb-0.5" aria-label="Attach file">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileUpload} 
+            accept="image/*,application/pdf" 
+            className="hidden" 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="glass p-2.5 rounded-xl text-on-surface-variant hover:text-on-surface transition-colors flex-shrink-0 mb-0.5" 
+            aria-label="Attach file"
+          >
             <Paperclip className="w-4 h-4" />
           </button>
           <div className="flex-1 glass rounded-2xl flex items-end gap-2 px-4 py-2.5 min-h-[44px]">

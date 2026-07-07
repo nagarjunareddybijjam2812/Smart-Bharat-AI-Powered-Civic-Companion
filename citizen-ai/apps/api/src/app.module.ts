@@ -23,7 +23,7 @@ import { DatabaseModule } from './common/database/database.module'
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: ['.env.local', '.env', '../../.env.local', '../../.env'],
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],

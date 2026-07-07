@@ -55,4 +55,10 @@ export class AiController {
   simplifyPolicy(@Body('text') text: string) {
     return this.aiService.simplifyPolicy(text)
   }
+
+  @Post('analyze-document')
+  @ApiOperation({ summary: 'Extract text from a document image using Gemini Vision' })
+  analyzeDocument(@Body() body: { imageBase64: string; mimeType: string }) {
+    return this.aiService.analyzeDocument(body.imageBase64, body.mimeType)
+  }
 }
