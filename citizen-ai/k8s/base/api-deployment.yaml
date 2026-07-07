@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: citizen-ai-api
+  namespace: citizen-ai
+  labels:
+    app: citizen-ai
+    component: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: citizen-ai
+      component: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: citizen-ai
+        component: api
+    spec:
+      containers:
+      - name: api
+        image: gcr.io/citizen-ai/api:latest
+        ports:
+        - containerPort: 4000
+        envFrom:
+        - configMapRef:
+            name: citizen-ai-config
+        - secretRef:
+            name: citizen-ai-secrets
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 4000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 4000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1001
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citizen-ai-api
+  namespace: citizen-ai
+spec:
+  selector:
+    app: citizen-ai
+    component: api
+  ports:
+  - port: 80
+    targetPort: 4000
+    protocol: TCP
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: citizen-ai-api-hpa
+  namespace: citizen-ai
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: citizen-ai-api
+  minReplicas: 3
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

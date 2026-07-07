@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: citizen-ai-web
+  namespace: citizen-ai
+  labels:
+    app: citizen-ai
+    component: web
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: citizen-ai
+      component: web
+  template:
+    metadata:
+      labels:
+        app: citizen-ai
+        component: web
+    spec:
+      containers:
+      - name: web
+        image: gcr.io/citizen-ai/web:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://api.citizen-ai.gov.in"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: citizen-ai-web
+  namespace: citizen-ai
+spec:
+  selector:
+    app: citizen-ai
+    component: web
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: ClusterIP
