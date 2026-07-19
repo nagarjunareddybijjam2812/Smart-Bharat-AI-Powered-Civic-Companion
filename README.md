@@ -3,7 +3,6 @@
   <p><strong>Production-grade AI-powered Civic Platform</strong></p>
   <p>Governance, Reimagined.</p>
   
-  [![CI](https://github.com/your-org/citizen-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/citizen-ai/actions)
   
 </div>
 
