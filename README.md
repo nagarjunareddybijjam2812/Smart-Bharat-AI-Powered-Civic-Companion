@@ -3,7 +3,7 @@
   <p><strong>Production-grade AI-powered Civic Platform</strong></p>
   <p>Governance, Reimagined.</p>
   
-  
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 </div>
 
 ---
