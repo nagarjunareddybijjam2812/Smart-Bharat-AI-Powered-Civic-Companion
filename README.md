@@ -4,7 +4,7 @@
   <p>Governance, Reimagined.</p>
   
   [![CI](https://github.com/your-org/citizen-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/citizen-ai/actions)
-  [![License](LICENSE)
+  
 </div>
 
 ---
